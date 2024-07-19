@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 const session = require('express-session')
 
 let users = []
-let todos = []
+let todos = [] // contains objects with id and todo array
 
 app.set('view-engine', 'pug')   
 app.use(express.json()) // for parsing application/json
@@ -74,20 +74,23 @@ app.get('/api/secret', CheckIfAuthenticated, (req, res)=>{
 });
   
 app.post('/api/todos', CheckIfAuthenticated, (req, res)=>{
-    console.log('Im now here')
-    todos.push(req.body.todo)
-    res.json({
-        id: req.session.user.id,
-        todo: todos
-    })
+    let user = req.session.user
+    let todoCheck = todos.find(todo => todo.id === user.id)
+    if (!todoCheck) {
+        const newTodo = {
+            id: user.id,
+            todo: [req.body.todo]
+        }
+        todos.push(newTodo)
+        res.json(newTodo)
+    } else {
+        todoCheck.todo.push(req.body.todo);
+        res.json(todoCheck)
+    }
 });
 
 app.get('/api/todos/list', CheckIfAuthenticated, (req, res)=>{
-    
-    res.json({
-        id: req.session.user.id,
-        todo: todos
-    })
+    res.json(todos)
 });
 
 function CheckIfAuthenticated(req, res, next) {
