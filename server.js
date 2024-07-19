@@ -77,7 +77,7 @@ app.post('/api/todos', CheckIfAuthenticated, (req, res)=>{
     console.log('Im now here')
     todos.push(req.body.todo)
     res.json({
-        //id: req.session.user.id,
+        id: req.session.user.id,
         todo: todos
     })
 });
@@ -85,7 +85,7 @@ app.post('/api/todos', CheckIfAuthenticated, (req, res)=>{
 app.get('/api/todos/list', CheckIfAuthenticated, (req, res)=>{
     
     res.json({
-        //id: req.session.user.id,
+        id: req.session.user.id,
         todo: todos
     })
 });
