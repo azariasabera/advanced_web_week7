@@ -79,12 +79,12 @@ app.post('/api/todos', CheckIfAuthenticated, (req, res)=>{
     if (!todoCheck) {
         const newTodo = {
             id: user.id,
-            todo: [req.body.todo]
+            todos: [req.body.todo]
         }
         todos.push(newTodo)
         res.json(newTodo)
     } else {
-        todoCheck.todo.push(req.body.todo);
+        todoCheck.todos.push(req.body.todo);
         res.json(todoCheck)
     }
 });
