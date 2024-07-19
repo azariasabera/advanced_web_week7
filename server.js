@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const session = require('express-session')
 
 let users = []
+let todos = []
 
 app.set('view-engine', 'pug')   
 app.use(express.json()) // for parsing application/json
@@ -20,7 +21,7 @@ app.get('/', (req, res) => {
     res.render('index.pug')
 })
 
-app.post('/api/user/register', async (req, res)=>{
+app.post('/api/user/register', CheckIfNotAuthenticated, async (req, res)=>{
     try {
         let userCheck = users.find(user => user.username === req.body.username)
         if (!userCheck) { 
@@ -49,7 +50,7 @@ app.get('/api/user/login', (req, res)=>{
     res.render('login.pug')
 });
 
-app.post('/api/user/login', async (req, res)=>{
+app.post('/api/user/login', CheckIfNotAuthenticated, async (req, res)=>{
     let checkUser = users.find(user => user.username === req.body.username)
     if (checkUser) {
         try {
@@ -72,11 +73,35 @@ app.get('/api/secret', CheckIfAuthenticated, (req, res)=>{
     res.send('Secret Page')
 });
   
+app.post('/api/todos', CheckIfAuthenticated, (req, res)=>{
+    console.log('Im now here')
+    todos.push(req.body.todo)
+    res.json({
+        //id: req.session.user.id,
+        todo: todos
+    })
+});
+
+app.get('/api/todos/list', CheckIfAuthenticated, (req, res)=>{
+    
+    res.json({
+        //id: req.session.user.id,
+        todo: todos
+    })
+});
+
 function CheckIfAuthenticated(req, res, next) {
     if (req.session.user) {
         return next()
     }
     res.status(401).send('Not Authenticated')
+}
+
+function CheckIfNotAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return res.redirect('/')
+    }
+    next()
 }
 
 app.listen(port, ()=>{
