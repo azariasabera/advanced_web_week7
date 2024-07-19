@@ -26,7 +26,7 @@ app.post('/api/user/register', async (req, res)=>{
             users.push(newUser);
             res.json(newUser)
         } else {
-            res.send("User already exists!")
+            res.status(400).send("User already exists!")
         }
 
     } catch (error) {
