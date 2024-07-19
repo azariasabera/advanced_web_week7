@@ -67,7 +67,18 @@ app.post('/api/user/login', async (req, res)=>{
     }
 });
 
-    
+app.get('/api/secret', CheckIfAuthenticated, (req, res)=>{
+    //res.render('secret.pug')
+    res.send('Secret Page')
+});
+  
+function CheckIfAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return next()
+    }
+    res.status(401).send('Not Authenticated')
+}
+
 app.listen(port, ()=>{
     console.log(`Listening to port ${port}`)
 })
